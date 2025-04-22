@@ -21,23 +21,23 @@
 <% end %>
 
 <%= form_with url: new_booking_path, method: :get do |form|%>
-    <%= form.radio_button %>
-    <%form.submit "Book Flight"%>
-<% end %>
+    <%= form.hidden_field :num_passengers, value: @num_passengers %>
     <% if @matching_flights.present? %>
-        <h2>flights available for the selected criteria:</h2>
-      <% @matching_flights.each do |flight|%>
-        <div class="card mb-3">
-          <div class="card-body">
-            
-            <p class="card-text">Departure: <%= flight.departure_airport.name %></p>
-            <p class="card-text">Arrival: <%= flight.arrival_airport.name %></p>
-            <p class="card-text">Date: <%= flight.start_date.strftime("%B %d, %Y") %></p>
-          </div> 
-        </div>
-      <% end %>  
+        <% @matching_flights.each do |flight|%>
+            <%= form.radio_button :flight_id, flight.id, required: true %>
+            <%= form.label "flight_id_#{flight.id}" do %>
+                <%= flight.departure_airport.name%>(<%= flight.departure_airport.code%>) <br>
+                <%= flight.arrival_airport.name%>(<%= flight.arrival_airport.code%>)<br>
+                <%= flight.start_date.strftime("%B %d, %Y at %I:%M %p")%><br>
+                <%= flight.duration%>
+            <% end %>
+            <br>
+        <% end %>
     <%else%>
         <div class="alert alert-info" role="alert">
           No flights available for the selected criteria.
-        </div>       
+        </div>           
     <% end %>
+    <%= form.submit "Book Flight"%>
+<% end %>
+   
